@@ -2,3 +2,4 @@
 *.a
 *.lo
 *.la
+/test/macos/gtest
