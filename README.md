@@ -1,6 +1,6 @@
 ## OpenUCX snippets
 
-#Usage
+### Usage
 
 ```
 ( cd test/gtest ; make )
