@@ -3,3 +3,4 @@
 *.lo
 *.la
 /test/macos/gtest
+a.out
