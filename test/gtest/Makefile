@@ -1,7 +1,13 @@
 
 .SUFFIXES: .cc .lo .la
 
+UNAME := $(shell uname -s)
+ifeq ($(UNAME),Linux)
+LIBTOOL=libtool
+endif
+ifeq ($(UNAME),Darwin)
 LIBTOOL=/usr/local/bin/glibtool
+endif
 GTEST_BASE=$(CURDIR)
 BUILD_DIR=$(GTEST_BASE)/build
 VPATH=src:build
