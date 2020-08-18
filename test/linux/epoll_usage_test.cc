@@ -11,7 +11,7 @@ extern "C" {
 #include <sys/wait.h>
 }
 
-TEST(epoll_usage_test, hoge) {
+TEST(epoll_usage_test, basic_epoll) {
     int p[2];
     int status;
     pid_t pid;
@@ -37,39 +37,30 @@ TEST(epoll_usage_test, hoge) {
             perror("epoll_create");
         }
 
-        event.events = EPOLLIN | EPOLLET; 
+        event.events = EPOLLIN; // | EPOLLET;
         event.data.fd = p[0];
 
         status = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, p[0], &event);
         if ( status < 0 ){
             perror("epoll_ctl");
         }
-        nready = epoll_wait(epoll_fd, event2, 10, 2000);
-        printf("nready: %d\n",nready);
 
+        nready = epoll_wait(epoll_fd, event2, 10, 2000);
         if( nready < 0 ){
            perror("epoll_wait");
         }
 
-        for( i = 0 ; i < nready ; i++ ) {
-           printf("nready %d\n",i);
-           printf("fd %d\n",event2[i].data.fd);
-           printf("p[0] %d\n",p[0]);
-           if( event2[i].data.fd == p[0] ){
-              //printf("stdin\n");
-              read(p[0],&buf,5);
-              //printf("%s\n",buf);
-              EXPECT_EQ(p[0],event2[i].data.fd);
-            }
-        }
-    } else if( pid > 0 ){ /* parent */ 
+        EXPECT_EQ(1, nready);
+        EXPECT_EQ(p[0], event2[i].data.fd);
+        read(p[0],buf,255);
+        EXPECT_STREQ("0123456789", buf);
+    } else if( pid > 0 ){ /* parent */
         sleep(1);
         close(p[0]); /* close read pipe */
-        printf("write \n");
+
         write(p[1],"0123456789",10);
         wait(&status);
     } else {
         perror("fork()");
     }
 }
-
