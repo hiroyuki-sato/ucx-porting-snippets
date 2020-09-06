@@ -1,3 +1,0 @@
-foo.o: foo.c common.h
-
-common.h:
