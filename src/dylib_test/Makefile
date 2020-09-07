@@ -18,21 +18,19 @@ OBJ=$(SRC:.c=.lo)
 #	$(LIBTOOL) --mode=compile --tag=CC $(CC) -c $(CFLAGS) $< -o $@
 
 libfoo.dylib: foo.o
-#	$(CC) -dynamiclib $<  -o $@
-	$(CC) -Wl,-undefined -Wl,dynamic_lookup -dynamiclib -compatibility_version 1 \
+	$(CC) -Wl,-undefined -Wl,dynamic_lookup -dynamiclib \
+              -compatibility_version 1 \
+              -install_name /usr/lib/libhoge.0.dylib \
               -current_version 1.0 -Wl,-single_module $<  -o $@
-#	$(CC) -undefined dynamic_lookup -dynamiclib -compatibility_version 1 \
+
+# Without insatll_name build succeed with two-level namespace
+#	$(CC) -Wl,-undefined -Wl,dynamic_lookup -dynamiclib \
+#              -compatibility_version 1 \
 #              -current_version 1.0 -Wl,-single_module $<  -o $@
-#
-#	$(CC) -Wl,-undefined -Wl,dynamic_lookup -dynamiclib $<  -o $@
-
-#	OK build (flat_namespace)
-#	$(CC) -Wl,-flat_namespace -undefined dynamic_lookup -dynamiclib $<  -o $@
-#	$(CC) -Wl,-flat_namespace -Wl,-undefined -Wl,dynamic_lookup -dynamiclib $<  -o $@
-
 
 foo.o: foo.c
-	$(CC) -MD -MP -MF hoge.tpo -o $@ -c $<
+#	$(CC) -MD -MP -MF hoge.tpo -o $@ -c $<
+	$(CC) -o $@ -c $<
 
 clean:
 	/bin/rm -rf *.lo lib* *.o
